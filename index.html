@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>YogaPose Prediction</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to bottom right, #f3f4f6, #e0f7fa);
+      color: #333;
+    }
+
+    h1 {
+      text-align: center;
+      text-transform: uppercase;
+      font-weight: 800;
+      font-size: 48px;
+      color: #2c3e50;
+      padding-top: 60px;
+      margin-bottom: 30px;
+      letter-spacing: 2px;
+      text-shadow: 1px 1px 2px #ccc;
+    }
+
+    .center {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 60vh;
+    }
+
+    .btn {
+      padding: 16px 32px;
+      font-size: 18px;
+      font-weight: bold;
+      background: linear-gradient(to right, #4CAF50, #81C784);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+      transition: transform 0.2s, background 0.3s, box-shadow 0.3s;
+    }
+
+    .btn:hover {
+      background: linear-gradient(to right, #388E3C, #66BB6A);
+      transform: scale(1.05);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 14px;
+      color: #666;
+    }
+
+  </style>
+</head>
+<body>
+  <h1>PoseMaster: Real-Time Yoga Pose Detection and Correction using MediaPipe</h1>
+  <div style="text-align: center;">
+    <img src="yoga_intro.png" alt="Yoga Pose" style="max-width: 500px; width: 80%; height: auto;" />
+  </div>
+  <div class="center" style="margin-top: -100px;">
+    <button class="btn" onclick="location.href='browser.html'">Get Started</button>
+  </div>
+  <footer>
+    &copy; 2025 PoseMaster | Designed with ❤️ to improve posture & peace
+  </footer>
+</body>
+</html>

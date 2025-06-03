@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Yoga Pose Display</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      min-height: 100vh;
+      margin: 0;
+    }
+
+    /* Container to hold pose image and webcam side by side */
+    #container {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      width: 100%;
+      max-width: 1100px;
+      margin-bottom: 20px;
+    }
+
+    #pose-image, #webcam {
+      width: 45%;
+      max-width: 500px;
+      border: 2px solid #ccc;
+      border-radius: 8px;
+      object-fit: contain;
+    }
+
+    #feedback {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: green;
+      margin-bottom: 30px;
+    }
+
+    /* Back button container and style */
+    .button-container {
+      display: flex;
+      justify-content: center; /* centers horizontally */
+      width: 100%;
+      max-width: 1100px;
+    }
+
+    .back-btn {
+      padding: 12px 30px;
+      background: linear-gradient(135deg, #42a5f5, #478ed1);
+      color: white;
+      font-weight: 600;
+      font-size: 18px;
+      text-decoration: none;
+      border-radius: 50px;
+      box-shadow: 0 5px 15px rgba(66, 165, 245, 0.4);
+      transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+      text-align: center;
+      cursor: pointer;
+      user-select: none;
+      display: inline-block; /* keep inline-block for padding & size */
+    }
+
+    .back-btn:hover {
+      background: linear-gradient(135deg, #478ed1, #42a5f5);
+      box-shadow: 0 8px 25px rgba(66, 165, 245, 0.6);
+      transform: scale(1.05);
+    }
+
+    .back-btn:active {
+      transform: scale(0.98);
+    }
+  </style>
+</head>
+<body>
+  <h2>Match this Pose:</h2>
+  <div id="container">
+    <img id="pose-image" alt="Pose Image" />
+    <video id="webcam" autoplay playsinline muted></video>
+  </div>
+  <div id="feedback">Loading feedback...</div>
+
+  <div class="button-container">
+    <a href="yoga.html" class="back-btn">← Back to Ages</a>
+  </div>
+
+  <script>
+    // Get pose name from query string
+    function getQueryParam(name) {
+      const params = new URLSearchParams(window.location.search);
+      return params.get(name);
+    }
+  
+    const poseName = getQueryParam('pose');
+    if (!poseName) {
+      alert('No pose specified.');
+      window.location.href = 'yoga.html';
+    }
+  
+    // Show pose image
+    const poseImage = document.getElementById('pose-image');
+    poseImage.src = `/poses/${poseName}.jpg`;
+  
+    // Access webcam
+    const webcam = document.getElementById('webcam');
+    navigator.mediaDevices.getUserMedia({ video: true })
+      .then(stream => {
+        webcam.srcObject = stream;
+      })
+      .catch(err => {
+        console.error('Webcam error:', err);
+        alert('Could not access webcam.');
+      });
+  
+    async function sendFrame() {
+      if (webcam.videoWidth === 0 || webcam.videoHeight === 0) return;
+  
+      const canvas = document.createElement('canvas');
+      canvas.width = webcam.videoWidth;
+      canvas.height = webcam.videoHeight;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(webcam, 0, 0);
+      const dataUrl = canvas.toDataURL('image/jpeg');
+  
+      try {
+        const response = await fetch('/pose-feedback', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ image: dataUrl, pose_name: poseName })
+        });
+  
+        const result = await response.json();
+  
+        if (result.error) {
+          document.getElementById('feedback').innerText = `⚠️ ${result.error}`;
+          document.getElementById('feedback').style.color = 'gray';
+          return;
+        }
+  
+        const similarity = result.similarity;
+        const isCorrect = similarity >= 85; // Threshold
+  
+        document.getElementById('feedback').innerText = isCorrect
+          ? `✅ Pose is correct! Accuracy: ${similarity}%`
+          : `❌ Pose is incorrect. Accuracy: ${similarity}%`;
+        document.getElementById('feedback').style.color = isCorrect ? 'green' : 'red';
+  
+      } catch (err) {
+        console.error('Feedback error:', err);
+        document.getElementById('feedback').innerText = `❌ Server error`;
+        document.getElementById('feedback').style.color = 'gray';
+      }
+    }
+  
+    // Continuously check pose every 1.5 seconds
+    setInterval(sendFrame, 1500);
+  </script>
+  
+</body>
+</html>
