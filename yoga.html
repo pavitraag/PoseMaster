@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Yoga Poses by Age</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      text-align: center;
+      padding: 30px;
+    }
+    h1 {
+      color: #4caf50;
+    }
+    .btn {
+      padding: 10px 20px;
+      margin: 10px;
+      border: none;
+      background: #4caf50;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background 0.3s ease;
+    }
+    .btn:hover {
+      background: #388e3c;
+    }
+    .pose-list {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .pose-list button {
+      background: #2196f3;
+      transition: background 0.3s ease;
+    }
+    .pose-list button:hover {
+      background: #1769aa;
+    }
+    .level-section,
+    .pose-section {
+      margin-top: 20px;
+    }
+
+    /* Back button container and styles */
+    .button-container {
+      display: flex;
+      justify-content: center;
+      margin-top: 30px;
+    }
+    .back-btn {
+      padding: 12px 30px;
+      background: linear-gradient(135deg, #42a5f5, #478ed1);
+      color: white;
+      font-weight: 600;
+      font-size: 18px;
+      text-decoration: none;
+      border-radius: 50px;
+      box-shadow: 0 5px 15px rgba(66, 165, 245, 0.4);
+      transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+      text-align: center;
+      cursor: pointer;
+      user-select: none;
+      display: inline-block;
+    }
+    .back-btn:hover {
+      background: linear-gradient(135deg, #478ed1, #42a5f5);
+      box-shadow: 0 8px 25px rgba(66, 165, 245, 0.6);
+      transform: scale(1.05);
+    }
+    .back-btn:active {
+      transform: scale(0.98);
+    }
+  </style>
+</head>
+<body>
+  <h1>🧘 Yoga Pose Browser</h1>
+  <div id="age-section">
+    <h2>Select Age Group:</h2>
+    <button class="btn" onclick="showLevels('6-12')">Age 6–12</button>
+    <button class="btn" onclick="showLevels('12-24')">Age 12–24</button>
+    <button class="btn" onclick="showLevels('24-35')">Age 24–35</button>
+    <button class="btn" onclick="showLevels('35-60')">Age 35–60</button>
+    <button class="btn" onclick="showLevels('60+')">Age 60+</button>
+  </div>
+
+  <div class="level-section" id="level-section" style="display:none;">
+    <h2>Select Level:</h2>
+    <button class="btn" onclick="showPoses('Beginner')">Beginner</button>
+    <button class="btn" onclick="showPoses('Intermediate')">Intermediate</button>
+    <button class="btn" onclick="showPoses('Advanced')">Advanced</button>
+  </div>
+
+  <div class="pose-section" id="pose-section" style="display:none;">
+    <h2>Select Pose:</h2>
+    <div id="pose-list" class="pose-list"></div>
+  </div>
+
+  <div class="button-container">
+    <a href="browser.html" class="back-btn">← Back to Main</a>
+  </div>
+
+  <script>
+    const poseData = {
+      '6-12': {
+        Beginner: ["Sukhasana", "Balasana", "Marjaryasana", "Baddha Konasana", "Bhujangasana", "Tree", "Warrior2"],
+        Intermediate: ["Adho Mukha Svanasana", "Dolphin Pose", "Setu Bandhasana", "Utkatasana", "Extended Puppy Pose", "Ardha Uttanasana"],
+        Advanced: ["Bakasana", "Navasana", "Ananda Balasana"]
+      },
+      '12-24': {
+        Beginner: ["Gomukhasana", "Warrior2", "Utthita Parsvakonasana", "Easy Pose", "Bound Angle Twist Pose", "Ardha Chandrasana", "Anjaneyasana"],
+        Intermediate: ["Garudasana", "Natarajasana", "Ustrasana", "Ardha Matsyendrasana", "Ardha Bhekasana", "Ardha Pincha Mayurasana", "Agnistambhasana", "Dhanurasana", "Janu Sirsasana"],
+        Advanced: ["Eka Pada Koundinyasana", "Astavakrasana", "Tittibhasana", "Ganda Bherundasana", "Kurmasana", "Krounchasana", "Compass Pose", "Eka Pada Galavasana"]
+      },
+      '24-35': {
+        Beginner: ["Baddha Virabhadrasana", "Ashtanga Namaskara", "Ardha Uttanasana", "Ardha Chandrasana"],
+        Intermediate: ["Baddha Padmasana", "Ardha Matsyendrasana", "Anantasana", "Svarga Dvijasana", "Kapotasana", "Cobra Pose", "Camel Pose"],
+        Advanced: ["Flying Pigeon Pose", "Kurmasana", "Eka Pada Raja Kapotasana II", "Adho Mukha Vrksasana", "Ganda Bherundasana", "Koundinyasana"]
+      },
+      '35-60': {
+        Beginner: ["Sukhasana", "Balasana", "Cat Pose", "Butterfly Pose", "Ardha Uttanasana"],
+        Intermediate: ["Bridge Pose", "Cobra Pose", "Warrior2", "Ardha Bhekasana", "Bound Angle Twist", "Bound Lotus Pose"],
+        Advanced: ["Fallen Angel Pose", "Eka Pada Koundinyasana II", "Kapotasana", "Compass Pose", "Kurmasana"]
+      },
+      '60+': {
+        Beginner: ["Savasana", "Sukhasana", "Marjaryasana", "Baddha Konasana", "Balasana"],
+        Intermediate: ["Bhujangasana", "Setu Bandhasana", "Warrior2"]
+        // No Advanced for 60+
+      }
+    };
+
+    let selectedAge = '';
+    let selectedLevel = '';
+
+    function showLevels(age) {
+      selectedAge = age;
+      document.getElementById('level-section').style.display = 'block';
+      document.getElementById('pose-section').style.display = 'none';
+
+      // Show or hide Advanced button based on age group
+      const levelButtons = document.querySelectorAll('#level-section .btn');
+      levelButtons.forEach(btn => {
+        if (btn.textContent === 'Advanced') {
+          btn.style.display = (age === '60+') ? 'none' : 'inline-block';
+        }
+      });
+    }
+
+    function showPoses(level) {
+      selectedLevel = level;
+      const poseList = document.getElementById('pose-list');
+      poseList.innerHTML = '';
+      const poses = poseData[selectedAge][level];
+      poses.forEach(pose => {
+        const btn = document.createElement('button');
+        btn.className = 'btn';
+        btn.textContent = pose;
+        btn.onclick = () => {
+          const formatted = pose.toLowerCase().replace(/ /g, '_');
+          window.location.href = `pose.html?pose=${encodeURIComponent(formatted)}`;
+        };
+        poseList.appendChild(btn);
+      });
+      document.getElementById('pose-section').style.display = 'block';
+    }
+  </script>
+</body>
+</html>
