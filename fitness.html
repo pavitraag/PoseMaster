@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Yoga Pose Feedback</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      height: 100vh;
+      background: #f0f0f0;
+    }
+  
+    #main-container {
+      display: flex;
+      height: 100vh;
+      width: 100%;
+    }
+  
+    #reference-container {
+      width: 40%;
+      background: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      box-sizing: border-box;
+      border-right: 2px solid #ccc;
+      justify-content: space-between;
+    }
+  
+    #reference-img {
+      width: 100%;
+      max-height: 70vh;
+      border-radius: 10px;
+      border: 1px solid #aaa;
+      object-fit: contain;
+    }
+  
+    #pose-name {
+      margin-top: 15px;
+      font-size: 24px;
+      font-weight: bold;
+      text-align: center;
+    }
+  
+    .button-container {
+      margin-top: 20px;
+      width: 100%;
+      display: flex;
+      justify-content: flex-start;
+    }
+  
+    .back-btn {
+      padding: 12px 30px;
+      background: linear-gradient(135deg, #42a5f5, #478ed1);
+      color: white;
+      font-weight: 600;
+      font-size: 18px;
+      text-decoration: none;
+      border-radius: 50px;
+      box-shadow: 0 5px 15px rgba(66, 165, 245, 0.4);
+      transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+      text-align: center;
+      cursor: pointer;
+      user-select: none;
+      display: inline-block;
+    }
+  
+    .back-btn:hover {
+      background: linear-gradient(135deg, #478ed1, #42a5f5);
+      box-shadow: 0 8px 25px rgba(66, 165, 245, 0.6);
+      transform: scale(1.05);
+    }
+  
+    .back-btn:active {
+      transform: scale(0.98);
+    }
+  
+    #camera-container {
+      width: 60%;
+      position: relative;
+      background: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+  
+    #video-container {
+      position: relative;
+      width: 640px;
+      height: 420px; /* reduced height to make space for feedback */
+      margin-bottom: 10px;
+    }
+  
+    video,
+    canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 640px;
+      height: 420px; /* match reduced video height */
+      border-radius: 10px;
+      border: 1px solid #aaa;
+    }
+  
+    #feedback {
+      font-size: 18px;
+      color: #d9534f;
+      font-weight: bold;
+      min-height: 40px;
+      margin-top: 10px;
+      text-align: center;
+    }
+  </style>
+  
+</head>
+<body>
+  <div id="main-container">
+    <div id="reference-container">
+      <img id="reference-img" src="" alt="Reference Pose" />
+      <div id="pose-name"></div>
+      <div class="button-container">
+        <a href="fittbutton.html" class="back-btn">← Back to Poses</a>
+      </div>
+    </div>
+
+    <div id="camera-container">
+      <div id="video-container">
+        <video id="video" autoplay playsinline></video>
+        <canvas id="output"></canvas>
+      </div>
+      <div id="feedback">Loading pose data...</div>
+    </div>
+  </div>
+
+
+  <!-- MediaPipe Pose Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.4/pose.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+
+  <script>
+    const poses = [
+      {name: "Easy Pose", img: "easy_pose.jpg"},
+      {name: "Balasana", img: "balasana.jpg"},
+      {name: "Cat Pose", img: "cat_pose.jpg"},
+      {name: "Savasana", img: "savasana.jpg"},
+      {name: "Setu Bandhasana", img: "setu_bandhasana.jpg"},
+      {name: "Dolphin Pose", img: "dolphin_pose.jpg"},
+      {name: "Uttanasana", img: "ardha_uttanasana.jpg"},
+      {name: "Tree Pose", img: "tree.jpg"},
+      {name: "Utkatasana", img: "utkatasana.jpg"},
+      {name: "Baddha Konasana", img: "baddha_konasana.jpg"}
+    ];
+
+    let referenceAnglesForPoses = [];
+
+    async function loadReferenceAngles() {
+      try {
+        const res = await fetch('reference_angles.json');
+        referenceAnglesForPoses = await res.json();
+        feedbackElement.textContent = "Pose data loaded. Start performing the pose.";
+      } catch (e) {
+        feedbackElement.textContent = "Failed to load reference pose data.";
+        feedbackElement.style.color = "red";
+      }
+    }
+
+    loadReferenceAngles();
+
+    const jointsToCheck = [
+      [11, 13, 15], [12, 14, 16],
+      [23, 25, 27], [24, 26, 28],
+      [13, 11, 23], [14, 12, 24]
+    ];
+
+    function calculateAngle(A, B, C) {
+      const AB = {x: A.x - B.x, y: A.y - B.y};
+      const CB = {x: C.x - B.x, y: C.y - B.y};
+      const dot = AB.x * CB.x + AB.y * CB.y;
+      const magAB = Math.sqrt(AB.x**2 + AB.y**2);
+      const magCB = Math.sqrt(CB.x**2 + CB.y**2);
+      let angleRad = Math.acos(dot / (magAB * magCB));
+      return angleRad * (180 / Math.PI);
+    }
+
+    function getLiveAngles(landmarks) {
+      let angles = [];
+      for (const [a, b, c] of jointsToCheck) {
+        const A = landmarks[a];
+        const B = landmarks[b];
+        const C = landmarks[c];
+        if (A && B && C) {
+          angles.push(calculateAngle(A, B, C));
+        } else {
+          angles.push(null);
+        }
+      }
+      return angles;
+    }
+
+    function compareAngles(liveAngles, refAngles) {
+      let feedbacks = [];
+      for (let i = 0; i < liveAngles.length; i++) {
+        if (liveAngles[i] == null) {
+          feedbacks.push(null);
+          continue;
+        }
+        const diff = liveAngles[i] - refAngles[i];
+        if (Math.abs(diff) < 15) {
+          feedbacks.push(null);
+        } else {
+          switch(i) {
+            case 0:
+              feedbacks.push(diff > 0 ? "Try bending your left elbow a bit more." : "Try straightening your left elbow slightly."); break;
+            case 1:
+              feedbacks.push(diff > 0 ? "Bend your right elbow a little more for better form." : "Straighten your right elbow a bit."); break;
+            case 2:
+              feedbacks.push(diff > 0 ? "Bend your left knee a bit more to improve balance." : "Straighten your left knee slightly."); break;
+            case 3:
+              feedbacks.push(diff > 0 ? "Bend your right knee a little more for stability." : "Try to straighten your right knee a bit."); break;
+            case 4:
+              feedbacks.push(diff > 0 ? "Lower your left shoulder slightly for better alignment." : "Raise your left shoulder a little."); break;
+            case 5:
+              feedbacks.push(diff > 0 ? "Lower your right shoulder a bit for improved posture." : "Lift your right shoulder slightly."); break;
+          }
+        }
+      }
+      return feedbacks.filter(f => f != null);
+    }
+
+    function getPoseIndex() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const index = parseInt(urlParams.get("poseIndex"));
+      return isNaN(index) || index < 0 || index >= poses.length ? 0 : index;
+    }
+
+    const poseIndex = getPoseIndex();
+    document.getElementById('reference-img').src = `poses/${poses[poseIndex].img}`;
+    document.getElementById('reference-img').alt = poses[poseIndex].name;
+    document.getElementById('pose-name').textContent = poses[poseIndex].name;
+
+    const videoElement = document.getElementById('video');
+    const canvasElement = document.getElementById('output');
+    const canvasCtx = canvasElement.getContext('2d');
+    const feedbackElement = document.getElementById('feedback');
+
+    function onResults(results) {
+      canvasCtx.save();
+      canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+      canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
+
+      if (results.poseLandmarks) {
+        window.drawConnectors(canvasCtx, results.poseLandmarks, window.POSE_CONNECTIONS, {color: '#00FF00', lineWidth: 4});
+        window.drawLandmarks(canvasCtx, results.poseLandmarks, {color: '#FF0000', lineWidth: 2});
+
+        const liveAngles = getLiveAngles(results.poseLandmarks);
+        const refAngles = referenceAnglesForPoses[poseIndex];
+        const feedbacks = compareAngles(liveAngles, refAngles);
+
+        if (feedbacks.length === 0) {
+          feedbackElement.textContent = "Great! Your pose looks good.";
+          feedbackElement.style.color = "green";
+        } else {
+          feedbackElement.textContent = feedbacks.join("; ");
+          feedbackElement.style.color = "red";
+        }
+      } else {
+        feedbackElement.textContent = "No pose detected. Please adjust your position.";
+        feedbackElement.style.color = "#d9534f";
+      }
+      canvasCtx.restore();
+    }
+
+    const pose = new window.Pose({
+      locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.4/${file}`
+    });
+    pose.setOptions({
+      modelComplexity: 1,
+      smoothLandmarks: true,
+      enableSegmentation: false,
+      smoothSegmentation: false,
+      minDetectionConfidence: 0.5,
+      minTrackingConfidence: 0.5
+    });
+    pose.onResults(onResults);
+
+    const camera = new window.Camera(videoElement, {
+      onFrame: async () => {
+        await pose.send({image: videoElement});
+      },
+      width: 640,
+      height: 480
+    });
+    camera.start();
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>YogaPose Model Comparison</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to bottom right, #e1f5fe, #fce4ec);
+      color: #333;
+    }
+
+    h1 {
+      text-align: center;
+      text-transform: uppercase;
+      font-weight: bold;
+      font-size: 40px;
+      color: #37474f;
+      padding-top: 40px;
+    }
+
+    .button-group {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      flex-wrap: wrap;
+      margin-top: 40px;
+    }
+
+    .btn {
+      padding: 14px 32px;
+      font-size: 16px;
+      font-weight: bold;
+      background: linear-gradient(to right, #2196F3, #64B5F6);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+      transition: transform 0.2s, background 0.3s, box-shadow 0.3s;
+    }
+
+    .btn:hover {
+      background: linear-gradient(to right, #1976D2, #42A5F5);
+      transform: scale(1.05);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .back-btn {
+    padding: 12px 30px;
+    background: linear-gradient(135deg, #42a5f5, #478ed1);
+    color: white;
+    font-weight: 600;
+    font-size: 18px;
+    text-decoration: none;
+    border-radius: 50px;
+    box-shadow: 0 5px 15px rgba(66, 165, 245, 0.4);
+    transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+    text-align: center;
+    cursor: pointer;
+    user-select: none;
+    display: inline-block;  /* keep inline-block for padding & size */
+  }
+
+  .back-btn:hover {
+    background: linear-gradient(135deg, #478ed1, #42a5f5);
+    box-shadow: 0 8px 25px rgba(66, 165, 245, 0.6);
+    transform: scale(1.05);
+  }
+
+  .back-btn:active {
+    transform: scale(0.98);
+  }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 14px;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <h1>YogaPose Model Comparison</h1>
+
+  <div style="text-align: center;">
+    <img src="yoga2.png" alt="Yoga Pose" style="max-width: 300px; width: 80%; height: auto;" />
+  </div>
+
+  <div class="button-group">
+    <button class="btn" onclick="location.href='xception.html'">Xception</button>
+    <button class="btn" onclick="location.href='vgg16.html'">VGG16</button>
+    <button class="btn" onclick="location.href='efficientnet.html'">EfficientNet</button>
+    <button class="btn" onclick="location.href='densenet.html'">DenseNet</button>
+  </div>
+
+  <div class="button-container" style="display: flex; justify-content: center; margin-top: 50px;">
+    <a href="browser.html" class="back-btn">← Back to Home</a>
+  </div>
+  
+
+  <footer>
+    &copy; 2025 PoseMaster | Compare Models with Confidence
+  </footer>
+</body>
+</html>

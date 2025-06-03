@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Select Yoga Pose</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 30px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to bottom right, #f3f4f6, #e0f7fa);
+      color: #333;
+    }
+
+    .header {
+  display: flex;
+  text-transform: uppercase;
+  font-weight: bold;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.title-wrapper {
+  flex: 1;
+  text-align: center;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 28px;
+  color: #333;
+}
+
+
+    .back-btn {
+      padding: 10px 20px;
+      background-color: #cce5ff;
+      color: #004085;
+      border: 1px solid #b8daff;
+      border-radius: 8px;
+      font-weight: bold;
+      text-decoration: none;
+      transition: background 0.3s ease;
+    }
+
+    .back-btn:hover {
+      background-color: #b8daff;
+    }
+
+    #pose-buttons {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+  gap: 20px;
+  justify-items: center;
+}
+
+
+    .pose-button {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 15px 20px;
+      background: #e3f2fd;
+      border: 1px solid #90caf9;
+      border-radius: 10px;
+      cursor: pointer;
+      width: 350px;
+      font-size: 18px;
+      transition: background 0.3s;
+    }
+
+    .pose-button:hover {
+      background: #bbdefb;
+    }
+
+    .pose-button img {
+      width: 80px;
+      height: 80px;
+      border-radius: 10px;
+      object-fit: cover;
+      border: 1px solid #64b5f6;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <div class="title-wrapper">
+      <h1>Select a Yoga Pose</h1>
+    </div>
+    <a href="browser.html" class="back-btn">← Back</a>
+  </div>
+  
+  <div id="pose-buttons"></div>
+
+  <script>
+    const poses = [
+      {name: "Easy Pose", img: "easy_pose.jpg"},
+      {name: "Balasana (Child's Pose)", img: "balasana.jpg"},
+      {name: "Cat Pose", img: "cat_pose.jpg"},
+      {name: "Savasana (Corpse Pose)", img: "savasana.jpg"},
+      {name: "Setu Bandhasana (Bridge Pose)", img: "setu_bandhasana.jpg"},
+      {name: "Dolphin Pose", img: "dolphin_pose.jpg"},
+      {name: "Uttanasana (Standing Forward Bend)", img: "ardha_uttanasana.jpg"},
+      {name: "Tree Pose", img: "tree.jpg"},
+      {name: "Utkatasana (Chair Pose)", img: "utkatasana.jpg"},
+      {name: "Baddha Konasana (Bound Angle Pose)", img: "baddha_konasana.jpg"}
+    ];
+
+    const container = document.getElementById('pose-buttons');
+
+    poses.forEach((pose, i) => {
+      const btn = document.createElement('div');
+      btn.classList.add('pose-button');
+      btn.innerHTML = `<img src="poses/${pose.img}" alt="${pose.name}"><span>${pose.name}</span>`;
+      btn.onclick = () => {
+        window.location.href = `fitness.html?poseIndex=${i}`;
+      };
+      container.appendChild(btn);
+    });
+  </script>
+
+</body>
+</html>

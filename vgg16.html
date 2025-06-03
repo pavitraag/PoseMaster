@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>VGG16 Model</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to bottom right, #f3e5f5, #e8f5e9);
+      color: #333;
+    }
+
+    h1 {
+      text-align: center;
+      text-transform: uppercase;
+      font-weight: bold;
+      font-size: 40px;
+      color: #4a148c;
+      padding-top: 40px;
+    }
+
+    .center {
+      text-align: center;
+      margin: 40px;
+    }
+
+    .center img {
+      max-width: 90%;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+
+    #metrics {
+      text-align: center;
+      margin: 30px auto;
+      width: 80%;
+    }
+
+    #metrics p {
+      font-size: 18px;
+      line-height: 1.6;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 14px;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <h1>VGG16 Model Results</h1>
+
+  <div class="center">
+    <h2>Training Accuracy & Loss Graph</h2>
+    <img src="vgg16.png" alt="VGG16 Accuracy Graph">
+  </div>
+
+  <div id="metrics">
+    <h2>Total Metrics for Final Epoch</h2>
+    <p><strong>Final Accuracy:</strong>98.05% </p>
+    <p><strong>Final Validation Accuracy:</strong> 70.52%</p>
+    <p><strong>Final Precision:</strong> 84.03%</p>
+    <p><strong>Final Recall:</strong> 0.8941</p>
+    <p><strong>Final Loss:</strong> 0.9946</p>
+    <p><strong>Final Validation Loss:</strong> 1.5769</p>
+  </div>
+
+  <div class="button-container">
+  <a href="model.html" class="back-btn">← Back to Models</a>
+</div>
+
+<style>
+  .button-container {
+    display: flex;
+    justify-content: center;  /* centers horizontally */
+    margin-top: 30px;
+  }
+
+  .back-btn {
+    padding: 12px 30px;
+    background: linear-gradient(135deg, #42a5f5, #478ed1);
+    color: white;
+    font-weight: 600;
+    font-size: 18px;
+    text-decoration: none;
+    border-radius: 50px;
+    box-shadow: 0 5px 15px rgba(66, 165, 245, 0.4);
+    transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+    text-align: center;
+    cursor: pointer;
+    user-select: none;
+    display: inline-block;  /* keep inline-block for padding & size */
+  }
+
+  .back-btn:hover {
+    background: linear-gradient(135deg, #478ed1, #42a5f5);
+    box-shadow: 0 8px 25px rgba(66, 165, 245, 0.6);
+    transform: scale(1.05);
+  }
+
+  .back-btn:active {
+    transform: scale(0.98);
+  }
+</style>
+
+  <footer>
+    &copy; 2025 YogaPose AI | Powered by VGG16 Model
+  </footer>
+</body>
+</html>
