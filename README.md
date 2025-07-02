@@ -41,7 +41,7 @@ pip install -r requirements.txt
 ### 4. Run the Flask App
 
 ```bash
-python app.py
+flask app.py
 ```
 
 Then, open your browser and visit:
@@ -55,24 +55,7 @@ Then, open your browser and visit:
 * **Pose Detection**: MediaPipe
 * **Computer Vision**: OpenCV
 * **Language**: Python 3
-* **Frontend**: HTML, CSS (Jinja2 templating)
-
----
-
-## 📂 Project Structure
-
-```
-PoseMaster/
-├── app.py                  # Main Flask application
-├── reference_poses.json    # Reference joint angles for poses
-├── requirements.txt        # Python dependencies
-├── templates/
-│   └── index.html          # UI template
-├── static/
-│   └── styles.css          # Styling (if applicable)
-└── README.md
-```
-
+* **Frontend**: HTML, CSS 
 ---
 
 ## 📸 How It Works
